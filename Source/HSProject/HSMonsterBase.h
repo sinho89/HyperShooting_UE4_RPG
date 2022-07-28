@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "HSMonsterBase.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnAttackEnd);
+
 UCLASS()
 class HSPROJECT_API AHSMonsterBase : public ACharacter
 {
@@ -20,6 +22,8 @@ public:
 
 	bool GetAttackingState() { return _isAttacking; }
 	void SetAttackingState(bool isAttacking) { _isAttacking = isAttacking; }
+
+	FOnAttackEnd OnAttackEnd;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

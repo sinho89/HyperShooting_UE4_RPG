@@ -5,6 +5,7 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "HSCharacterBase.h"
 #include "Engine/World.h"
+#include "HSMonsterBase.h"
 
 AHSPlayerControllerBase::AHSPlayerControllerBase()
 {
@@ -142,6 +143,9 @@ void AHSPlayerControllerBase::AttackToMouseCursor()
 	FHitResult Hit;
 	GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 	_attackToPos = Hit.ImpactPoint;
+
+	/*if (Hit.GetActor()->Name)
+		_attackToPos = Hit.GetActor()->GetActorLocation();*/
 
 	if (Hit.bBlockingHit)
 		SetAttacking(_attackToPos);

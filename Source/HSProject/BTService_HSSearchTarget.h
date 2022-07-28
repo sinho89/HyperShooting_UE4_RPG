@@ -13,5 +13,10 @@ UCLASS()
 class HSPROJECT_API UBTService_HSSearchTarget : public UBTService
 {
 	GENERATED_BODY()
+
+public:
+	UBTService_HSSearchTarget();
+	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+
 	
 };
