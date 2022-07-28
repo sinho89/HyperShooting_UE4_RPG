@@ -17,14 +17,21 @@ void UBTService_HSSearchTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
-	auto currentPawn = OwnerComp.GetAIOwner()->GetPawn();
+	/*auto currentPawn = OwnerComp.GetAIOwner()->GetPawn();
 
 	if (currentPawn == nullptr)
+		return;*/
+	AHSCharacterBase* target = Cast<AHSCharacterBase>(GetWorld()->GetFirstPlayerController()->GetPawn());
+	AHSCharacterBase* currentPawn = Cast<AHSCharacterBase>(OwnerComp.GetAIOwner()->GetPawn());
+	if (target && target->GetController()->IsPlayerController())
+	{
+		OwnerComp.GetBlackboardComponent()->SetValueAsObject(FName(TEXT("Target")), target);
 		return;
-
-	UWorld* world = currentPawn->GetWorld();
+	}
+	
+	/*UWorld* world = currentPawn->GetWorld();
 	FVector center = currentPawn->GetActorLocation();
-	float searchRadius = 1000.f;
+	float searchRadius = 5000.f;
 
 	if (world == nullptr)
 		return;
@@ -44,8 +51,6 @@ void UBTService_HSSearchTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint
 			if (target && target->GetController()->IsPlayerController())
 			{
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject(FName(TEXT("Target")), target);
-
-				DrawDebugSphere(world, center, searchRadius, 16, FColor::Green, false, 0.2f);
 				return;
 			}
 		}
@@ -53,8 +58,7 @@ void UBTService_HSSearchTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint
 	else
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject(FName(TEXT("Target")), nullptr);
-	}
+	}*/
 
-	DrawDebugSphere(world, center, searchRadius, 16, FColor::Red, false, 0.2f);
 
 }

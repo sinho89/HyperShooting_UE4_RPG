@@ -5,7 +5,6 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "HSCharacterBase.h"
 #include "Engine/World.h"
-#include "HSMonsterBase.h"
 
 AHSPlayerControllerBase::AHSPlayerControllerBase()
 {

@@ -5,7 +5,7 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "HSMonsterBase.h"
+#include "HSCharacterBase.h"
 
 UBTTask_HSFindPatrolPos::UBTTask_HSFindPatrolPos()
 {
@@ -31,7 +31,8 @@ EBTNodeResult::Type UBTTask_HSFindPatrolPos::ExecuteTask(UBehaviorTreeComponent&
 	{
 		//UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, randomLocation);
 		OwnerComp.GetBlackboardComponent()->SetValueAsVector(FName(TEXT("PatrolPos")), randomLocation.Location);
-		Cast<AHSMonsterBase>(currentPawn)->SetMovingState(true);
+		Cast<AHSCharacterBase>(currentPawn)->SetMovingState(true);
+		UE_LOG(LogTemp, Error, TEXT("Move!"));
 		return EBTNodeResult::Succeeded;
 	}
 

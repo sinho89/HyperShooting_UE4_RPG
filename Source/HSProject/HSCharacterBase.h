@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "HSCharacterBase.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnAttackEnd);
+
 UCLASS()
 class HSPROJECT_API AHSCharacterBase : public ACharacter
 {
@@ -34,6 +36,8 @@ public:
 
 	FRotator GetBulletRotation() { return _bulletRotation; }
 	void SetBulletRotation(FRotator bulletRotation) { _bulletRotation = bulletRotation; }
+
+	FOnAttackEnd OnAttackEnd;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

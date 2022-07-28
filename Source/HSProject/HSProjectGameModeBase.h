@@ -17,4 +17,11 @@ class HSPROJECT_API AHSProjectGameModeBase : public AGameModeBase
 public:
 	AHSProjectGameModeBase();
 
+public:
+	UPROPERTY()
+	TSubclassOf<UUserWidget> _HUD_Class;
+
+	UPROPERTY()
+	UUserWidget* _currentWidget;
+
 };

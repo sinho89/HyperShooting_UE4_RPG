@@ -3,7 +3,7 @@
 
 #include "BTTask_HSAttack.h"
 #include "HSAIController.h"
-#include "HSMonsterBase.h"
+#include "HSCharacterBase.h"
 
 UBTTask_HSAttack::UBTTask_HSAttack()
 {
@@ -15,21 +15,19 @@ EBTNodeResult::Type UBTTask_HSAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 {
 	EBTNodeResult::Type result = Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	auto monster = Cast<AHSMonsterBase>(OwnerComp.GetAIOwner()->GetPawn());
-
-	if (monster == nullptr)
+	//auto monster = Cast<AHSMonsterBase>(OwnerComp.GetAIOwner()->GetPawn());
+	auto _pawn = Cast<AHSCharacterBase>(OwnerComp.GetAIOwner()->GetPawn());
+	
+	if (_pawn == nullptr)
 		return EBTNodeResult::Failed;
 
-	monster->SetAttackingState(true);
+	_pawn->SetAttackingState(true);
 	_isAttacking = true;
 
-	monster->OnAttackEnd.AddLambda([this]()
+	_pawn->OnAttackEnd.AddLambda([this]()
 		{ 
 			_isAttacking = false;
 		});
-
-	if (!_isAttacking)
-		monster->SetAttackingState(false);
 
 	return result;
 }
@@ -39,7 +37,11 @@ void UBTTask_HSAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
 	if (_isAttacking == false)
+	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-
+		auto _pawn = Cast<AHSCharacterBase>(OwnerComp.GetAIOwner()->GetPawn());
+		_pawn->SetAttackingState(false);
+		UE_LOG(LogTemp, Error, TEXT("Attack!"));
+	}
 
 }

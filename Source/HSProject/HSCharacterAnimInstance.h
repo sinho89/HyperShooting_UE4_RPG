@@ -26,12 +26,18 @@ public:
 private:
 	UFUNCTION()
 	void AnimNotify_StartPlay();
-
 	UFUNCTION()
 	void AnimNotify_Fire();
+	UFUNCTION()
+	void AnimNotify_LeftPlant();
+	UFUNCTION()
+	void AnimNotify_RightPlant();
+	UFUNCTION()
+	void AnimNotify_AttackEnd();
+
 
 	UPROPERTY()
-	class AHSCharacterBase* _player;
+	class AHSCharacterBase* _character;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	bool _isMoving;

@@ -5,6 +5,7 @@
 #include <Components/AudioComponent.h>
 #include <Kismet/GameplayStatics.h>
 #include "HSGameInstance.h"
+#include "HSHUD.h"
 
 AHSProjectGameModeBase::AHSProjectGameModeBase()
 {
@@ -15,5 +16,20 @@ AHSProjectGameModeBase::AHSProjectGameModeBase()
 	{
 		DefaultPawnClass = BP_Player.Class;
 	}
+
+	static ConstructorHelpers::FClassFinder<UHSHUD> UI_HUD(TEXT("WidgetBlueprint'/Game/UI/WBP_HSHUD.WBP_HSHUD_C'"));
+	if (UI_HUD.Succeeded())
+	{
+		_HUD_Class = UI_HUD.Class;
+		_currentWidget = CreateWidget(GetWorld(), _HUD_Class);
+		
+		if (_currentWidget)
+		{
+			_currentWidget->AddToViewport();
+			//_currentWidget->RemoveFromViewport();
+		}
+	}
+
+
 }
 

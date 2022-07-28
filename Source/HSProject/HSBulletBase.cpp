@@ -6,7 +6,7 @@
 #include <GameFramework/ProjectileMovementComponent.h>
 #include "DrawDebugHelpers.h"
 #include <Components/BoxComponent.h>
-#include "HSBulletHitEffectBase.h"
+#include "HSHitEffectBase.h"
 
 // Sets default values
 AHSBulletBase::AHSBulletBase()
@@ -54,7 +54,7 @@ void AHSBulletBase::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AAct
 {
 	if (bFromSweep && OtherActor)
 	{
-		GetWorld()->SpawnActor<AHSBulletHitEffectBase>(GetActorLocation(), GetActorRotation());
+		GetWorld()->SpawnActor<AHSHitEffectBase>(GetActorLocation(), GetActorRotation());
 		GetWorld()->DestroyActor(this);
 		//GetWorld()->DestroyActor(OtherActor);
 	}

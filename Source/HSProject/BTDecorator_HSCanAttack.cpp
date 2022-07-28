@@ -25,5 +25,20 @@ bool UBTDecorator_HSCanAttack::CalculateRawConditionValue(UBehaviorTreeComponent
 	if (target == nullptr)
 		return false;
 
-	return result && target->GetDistanceTo(currentPawn) <= 200.f;
+	auto pawn = Cast<AHSCharacterBase>(OwnerComp.GetAIOwner()->GetPawn());
+
+	if (target->GetDistanceTo(currentPawn) <= 200.f)
+	{
+		pawn->SetAttackingState(true);
+		pawn->SetMovingState(false);
+		return true;
+	}
+	else
+	{
+		pawn->SetAttackingState(false);
+		pawn->SetMovingState(true);
+		return false;
+	}
+
+	return result;
 }

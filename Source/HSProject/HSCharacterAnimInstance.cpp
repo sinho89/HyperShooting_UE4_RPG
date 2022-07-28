@@ -19,12 +19,12 @@ void UHSCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
-	_player = Cast<AHSCharacterBase>(TryGetPawnOwner());
+	_character = Cast<AHSCharacterBase>(TryGetPawnOwner());
 
-	if (IsValid(_player))
+	if (IsValid(_character))
 	{
-		_isMoving = _player->GetMovingState();
-		_isAttacking = _player->GetAttackingState();
+		_isMoving = _character->GetMovingState();
+		_isAttacking = _character->GetAttackingState();
 	}
 }
 
@@ -32,20 +32,38 @@ void UHSCharacterAnimInstance::AnimNotify_StartPlay()
 {
 	_isStartPlay = true;
 
-	_player = Cast<AHSCharacterBase>(TryGetPawnOwner());
+	_character = Cast<AHSCharacterBase>(TryGetPawnOwner());
 
-	if (IsValid(_player))
-		_player->SetPlayStart(true);
+	if (IsValid(_character))
+		_character->SetPlayStart(true);
 }
 
 void UHSCharacterAnimInstance::AnimNotify_Fire()
 {
-	if (IsValid(_player))
+	if (IsValid(_character))
 	{
 		if (!_isAttacking)
 			return;
 
 		FName muzzleSocket(TEXT("Muzzle_01"));
-		GetWorld()->SpawnActor<AHSBulletBase>(_player->GetMesh()->GetSocketLocation(muzzleSocket), _player->GetBulletRotation());
+		GetWorld()->SpawnActor<AHSBulletBase>(_character->GetMesh()->GetSocketLocation(muzzleSocket), _character->GetBulletRotation());
 	}
+}
+
+void UHSCharacterAnimInstance::AnimNotify_LeftPlant()
+{
+
+}
+
+void UHSCharacterAnimInstance::AnimNotify_RightPlant()
+{
+
+}
+
+void UHSCharacterAnimInstance::AnimNotify_AttackEnd()
+{
+	_character = Cast<AHSCharacterBase>(TryGetPawnOwner());
+
+	if (IsValid(_character))
+		_character->OnAttackEnd.Broadcast();
 }
