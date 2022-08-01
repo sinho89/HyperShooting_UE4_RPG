@@ -1,0 +1,37 @@
+[
+  {
+    "Name": 1,
+    "Level": 1,
+    "Attack": 10,
+    "MaxHp": 100,
+    "MaxExp": 100
+  },
+  {
+    "Name": 2,
+    "Level": 2,
+    "Attack": 15,
+    "MaxHp": 150,
+    "MaxExp": 150
+  },
+  {
+    "Name": 3,
+    "Level": 3,
+    "Attack": 20,
+    "MaxHp": 200,
+    "MaxExp": 200
+  },
+  {
+    "Name": 4,
+    "Level": 4,
+    "Attack": 25,
+    "MaxHp": 250,
+    "MaxExp": 250
+  },
+  {
+    "Name": 5,
+    "Level": 5,
+    "Attack": 30,
+    "MaxHp": 300,
+    "MaxExp": 300
+  }
+]

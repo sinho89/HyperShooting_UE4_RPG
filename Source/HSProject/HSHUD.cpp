@@ -2,14 +2,22 @@
 
 
 #include "HSHUD.h"
+#include "HSStatComponent.h"
 #include <Components/ProgressBar.h>
 
-void UHSHUD::SetGageValue(float Value, float MaxValue, int Type /*= 0*/)
+
+void UHSHUD::BindHp(class UHSStatComponent* StatComp)
 {
-	if (Type == 0) // HP
-		HpGage->Percent = Value / MaxValue;
-	else if (Type == 1) // MP
-		MpGage->Percent = Value / MaxValue;
-	else if (Type == 2) // EXP
-		ExpGage->Percent = Value / MaxValue;
+	_currentStatComp = StatComp;
+	_currentStatComp->OnHpChanged.AddUObject(this, &UHSHUD::UpdateHp);
+	UE_LOG(LogTemp, Error, TEXT("Bind Tower HP"));
+}
+
+void UHSHUD::UpdateHp()
+{
+	if (_currentStatComp.IsValid())
+	{
+		TowerHpGage->SetPercent(_currentStatComp->GetHpRatio());
+		UE_LOG(LogTemp, Error, TEXT("Bind Tower Update HP"));
+	}
 }

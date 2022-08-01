@@ -17,13 +17,17 @@ public:
 protected:
 	virtual void PostInitializeComponents() override;
 
+public:
+
+	UFUNCTION()
+	void SetBulletOwner(AHSCharacterBase* BulletOwner) { _bulletOwner = BulletOwner; }
 private:
 	UFUNCTION()
 		void OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 			UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 private:
 	UPROPERTY(VisibleAnywhere)
-	UParticleSystemComponent* _bulletEffect;
+	class UParticleSystemComponent* _bulletEffect;
 
 	UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* _trigger;
@@ -31,5 +35,6 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class UProjectileMovementComponent* _moveComponent;
 
-
+	UPROPERTY(VisibleAnywhere)
+	AHSCharacterBase* _bulletOwner;
 };

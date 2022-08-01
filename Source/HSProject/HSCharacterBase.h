@@ -19,7 +19,11 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
+private:
+	void SetAnimComponent();
+	void SetStatComponent();
 public:
 
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return _cameraComponent; }
@@ -31,11 +35,17 @@ public:
 	bool GetAttackingState() { return _isAttacking; }
 	void SetAttackingState(bool isAttacking) { _isAttacking = isAttacking; }
 
+	bool GetDeadState() { return _isDead; }
+	void SetDeadState(bool isDead) { _isDead = isDead; }
+
 	bool GetPlayStart() { return _isStartPlay; }
 	void SetPlayStart(bool isStartPlay) { _isStartPlay = isStartPlay; }
 
 	FRotator GetBulletRotation() { return _bulletRotation; }
 	void SetBulletRotation(FRotator bulletRotation) { _bulletRotation = bulletRotation; }
+
+	UFUNCTION()
+	UHSStatComponent* GetStatComponent() { return _statComponent; }
 
 	FOnAttackEnd OnAttackEnd;
 
@@ -49,6 +59,12 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Animation, meta = (AllowPrivateAccess = "true"))
 	class UHSCharacterAnimInstance* _animInstance;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stat, meta = (AllowPrivateAccess = "true"))
+	class UHSStatComponent* _statComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stat, meta = (AllowPrivateAccess = "true"))
+	class UWidgetComponent* _widgetComponent;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
 	bool _isMoving = false;
 
@@ -58,6 +74,12 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
 	bool _isStartPlay = false;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
+	bool _isDead = false;
+
 	UPROPERTY()
 	FRotator _bulletRotation;
+
+	UPROPERTY()
+	int32 _actorType = 0;
 };

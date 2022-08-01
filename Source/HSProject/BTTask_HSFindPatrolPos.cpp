@@ -29,10 +29,8 @@ EBTNodeResult::Type UBTTask_HSFindPatrolPos::ExecuteTask(UBehaviorTreeComponent&
 
 	if (navSystem->GetRandomPointInNavigableRadius(FVector::ZeroVector, 500.f, randomLocation))
 	{
-		//UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, randomLocation);
 		OwnerComp.GetBlackboardComponent()->SetValueAsVector(FName(TEXT("PatrolPos")), randomLocation.Location);
 		Cast<AHSCharacterBase>(currentPawn)->SetMovingState(true);
-		UE_LOG(LogTemp, Error, TEXT("Move!"));
 		return EBTNodeResult::Succeeded;
 	}
 

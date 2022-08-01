@@ -7,6 +7,8 @@
 #include "DrawDebugHelpers.h"
 #include <Components/BoxComponent.h>
 #include "HSHitEffectBase.h"
+#include "HSCharacterBase.h"
+#include "HSStatComponent.h"
 
 // Sets default values
 AHSBulletBase::AHSBulletBase()
@@ -34,8 +36,6 @@ AHSBulletBase::AHSBulletBase()
 	_moveComponent->InitialSpeed = 3000.f;
 	_moveComponent->ProjectileGravityScale = 0.f;
 	_moveComponent->bInitialVelocityInLocalSpace = true;
-
-	InitialLifeSpan = 1.0f;
 	
 
 	PrimaryActorTick.bCanEverTick = false;
@@ -52,11 +52,30 @@ void AHSBulletBase::PostInitializeComponents()
 
 void AHSBulletBase::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (bFromSweep && OtherActor)
+	if (OtherActor && (OtherActor != this) && OtherComp)
 	{
-		GetWorld()->SpawnActor<AHSHitEffectBase>(GetActorLocation(), GetActorRotation());
-		GetWorld()->DestroyActor(this);
-		//GetWorld()->DestroyActor(OtherActor);
+		if (OtherActor != nullptr)
+		{
+			if (OtherActor->GetClass()->GetName() == TEXT("BP_Player_C"))
+				return;
+
+			if (OtherActor->CanBeDamaged())
+			{
+				if (OtherActor->GetClass()->GetName() == TEXT("BP_Monster0_C"))
+				{
+					if (Cast<AHSCharacterBase>(OtherActor)->GetDeadState())
+						return;
+
+					FPointDamageEvent damageEvent;
+					//damageEvent.HitInfo = SweepResult;
+					if(_bulletOwner)
+						OtherActor->TakeDamage(_bulletOwner->GetStatComponent()->GetAttack(), damageEvent, _bulletOwner->GetController(), this);
+				}
+			}
+
+			GetWorld()->SpawnActor<AHSHitEffectBase>(GetActorLocation(), GetActorRotation());
+			GetWorld()->DestroyActor(this);
+		}
 	}
 }
 

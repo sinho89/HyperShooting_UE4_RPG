@@ -3,9 +3,10 @@
 
 #include "BTService_HSSearchTarget.h"
 #include "HSAIController.h"
-#include "HSCharacterBase.h"
+#include "HSActorBase.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "DrawDebugHelpers.h"
+#include "HSGameInstance.h"
+#include <Kismet/GameplayStatics.h>
 
 UBTService_HSSearchTarget::UBTService_HSSearchTarget()
 {
@@ -17,13 +18,16 @@ void UBTService_HSSearchTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
-	/*auto currentPawn = OwnerComp.GetAIOwner()->GetPawn();
+	auto currentPawn = OwnerComp.GetAIOwner()->GetPawn();
 
 	if (currentPawn == nullptr)
-		return;*/
-	AHSCharacterBase* target = Cast<AHSCharacterBase>(GetWorld()->GetFirstPlayerController()->GetPawn());
-	AHSCharacterBase* currentPawn = Cast<AHSCharacterBase>(OwnerComp.GetAIOwner()->GetPawn());
-	if (target && target->GetController()->IsPlayerController())
+		return;
+
+	auto gameInstance = Cast<UHSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	AHSActorBase* target = Cast<AHSActorBase>(gameInstance->GetTowerActor());
+
+	if (target)
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject(FName(TEXT("Target")), target);
 		return;

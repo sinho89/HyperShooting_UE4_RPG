@@ -21,6 +21,7 @@ public:
 
 	bool GetMoveState() { return _isMoving; }
 	bool GetAttackState() { return _isAttacking; }
+	bool GetDeadState() { return _isDead; }
 	bool GetStartAnimPlay() { return _isStartPlay; }
 
 private:
@@ -34,6 +35,8 @@ private:
 	void AnimNotify_RightPlant();
 	UFUNCTION()
 	void AnimNotify_AttackEnd();
+	UFUNCTION()
+	void AnimNotify_DeadEnd();
 
 
 	UPROPERTY()
@@ -47,5 +50,8 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	bool _isStartPlay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	bool _isDead;
 	
 };

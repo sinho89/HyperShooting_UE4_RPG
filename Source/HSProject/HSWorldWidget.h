@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "HSHUD.generated.h"
+#include "HSWorldWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class HSPROJECT_API UHSHUD : public UUserWidget
+class HSPROJECT_API UHSWorldWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
@@ -19,12 +19,8 @@ public:
 	void UpdateHp();
 
 private:
-
 	TWeakObjectPtr<class UHSStatComponent> _currentStatComp;
 
 	UPROPERTY(meta = (BindWidget))
-	class UProgressBar* TowerHpGage;
-
-	UPROPERTY(meta = (BindWidget))
-	class UProgressBar* ExpGage;
+	class UProgressBar* PB_HpBar;
 };

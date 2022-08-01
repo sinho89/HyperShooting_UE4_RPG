@@ -3,6 +3,7 @@
 
 #include "BTDecorator_HSCanAttack.h"
 #include "HSAIController.h"
+#include "HSActorBase.h"
 #include "HSCharacterBase.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
@@ -20,7 +21,7 @@ bool UBTDecorator_HSCanAttack::CalculateRawConditionValue(UBehaviorTreeComponent
 	if (currentPawn == nullptr)
 		return false;
 
-	auto target = Cast<AHSCharacterBase>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(FName(TEXT("Target"))));
+	auto target = Cast<AHSActorBase>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(FName(TEXT("Target"))));
 
 	if (target == nullptr)
 		return false;

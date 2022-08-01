@@ -38,6 +38,10 @@ void AHSPlayerControllerBase::PlayerTick(float DeltaTime)
 		return;
 	}
 
+	if (IsValid(_player) && _player->GetDeadState())
+		return;
+
+
 	Attacking();
 	Moving();
 }

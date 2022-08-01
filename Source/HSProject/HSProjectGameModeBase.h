@@ -17,11 +17,27 @@ class HSPROJECT_API AHSProjectGameModeBase : public AGameModeBase
 public:
 	AHSProjectGameModeBase();
 
+	virtual void InitGameState() override;
+
+private:
+	void SpawnMonster();
+	void InitializeMainUI();
+	void InitializeObjectCreate();
+
 public:
 	UPROPERTY()
 	TSubclassOf<UUserWidget> _HUD_Class;
 
 	UPROPERTY()
-	UUserWidget* _currentWidget;
+	class UUserWidget* _currentWidget;
+
+	UPROPERTY()
+	class UHSHUD* _mainUIWidget;
+
+	UPROPERTY()
+	FTimerHandle _leftMonsterSpawnTimerHandle;
+	
+	UPROPERTY()
+	FTimerHandle _rightMonsterSpawnTimerHandle;
 
 };

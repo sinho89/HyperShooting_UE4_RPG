@@ -7,11 +7,13 @@
 #include <GameFramework/ProjectileMovementComponent.h>
 #include <Particles/ParticleSystemComponent.h>
 #include <Components/BoxComponent.h>
+#include "HSStatComponent.h"
 
 UHSCharacterAnimInstance::UHSCharacterAnimInstance()
 {
 	_isMoving = false;
 	_isAttacking = false;
+	_isDead = false;
 	_isStartPlay = false;
 }
 
@@ -19,12 +21,16 @@ void UHSCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
+	if (_isDead)
+		return;
+
 	_character = Cast<AHSCharacterBase>(TryGetPawnOwner());
 
 	if (IsValid(_character))
 	{
 		_isMoving = _character->GetMovingState();
 		_isAttacking = _character->GetAttackingState();
+		_isDead = _character->GetDeadState();
 	}
 }
 
@@ -46,7 +52,9 @@ void UHSCharacterAnimInstance::AnimNotify_Fire()
 			return;
 
 		FName muzzleSocket(TEXT("Muzzle_01"));
-		GetWorld()->SpawnActor<AHSBulletBase>(_character->GetMesh()->GetSocketLocation(muzzleSocket), _character->GetBulletRotation());
+		auto bullet = GetWorld()->SpawnActor<AHSBulletBase>(_character->GetMesh()->GetSocketLocation(muzzleSocket), _character->GetBulletRotation());
+		if(bullet)
+			bullet->SetBulletOwner(_character);
 	}
 }
 
@@ -66,4 +74,9 @@ void UHSCharacterAnimInstance::AnimNotify_AttackEnd()
 
 	if (IsValid(_character))
 		_character->OnAttackEnd.Broadcast();
+}
+
+void UHSCharacterAnimInstance::AnimNotify_DeadEnd()
+{
+	GetWorld()->DestroyActor(_character);
 }

@@ -1,0 +1,23 @@
+[
+  {
+    "Name": 1,
+    "Index" : 1,
+    "Attack": 5,
+    "MaxHp": 50,
+    "ExpPoint": 20
+  },
+  {
+    "Name": 2,
+    "Index": 2,
+    "Attack": 10,
+    "MaxHp": 80,
+    "ExpPoint": 40
+  },
+  {
+    "Name": 3,
+    "Index": 3,
+    "Attack": 15,
+    "MaxHp": 100,
+    "ExpPoint": 60
+  }
+]

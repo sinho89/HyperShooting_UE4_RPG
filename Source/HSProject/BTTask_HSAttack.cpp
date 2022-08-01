@@ -41,7 +41,6 @@ void UBTTask_HSAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		auto _pawn = Cast<AHSCharacterBase>(OwnerComp.GetAIOwner()->GetPawn());
 		_pawn->SetAttackingState(false);
-		UE_LOG(LogTemp, Error, TEXT("Attack!"));
 	}
 
 }
