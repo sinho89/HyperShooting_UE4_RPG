@@ -5,19 +5,27 @@
 #include "HSStatComponent.h"
 #include <Components/ProgressBar.h>
 
-
 void UHSHUD::BindHp(class UHSStatComponent* StatComp)
 {
 	_currentStatComp = StatComp;
 	_currentStatComp->OnHpChanged.AddUObject(this, &UHSHUD::UpdateHp);
-	UE_LOG(LogTemp, Error, TEXT("Bind Tower HP"));
 }
 
 void UHSHUD::UpdateHp()
 {
 	if (_currentStatComp.IsValid())
-	{
-		TowerHpGage->SetPercent(_currentStatComp->GetHpRatio());
-		UE_LOG(LogTemp, Error, TEXT("Bind Tower Update HP"));
-	}
+		PB_HpBar->SetPercent(_currentStatComp->GetHpRatio());
+}
+
+void UHSHUD::BindExp(class UHSStatComponent* StatComp)
+{
+	_currentStatComp = StatComp;
+	_currentStatComp->OnExpChanged.AddUObject(this, &UHSHUD::UpdateExp);
+
+}
+
+void UHSHUD::UpdateExp()
+{
+	if (_currentStatComp.IsValid())
+		PB_ExpBar->SetPercent(_currentStatComp->GetExpRatio());
 }

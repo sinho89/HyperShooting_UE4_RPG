@@ -25,11 +25,12 @@ void UHSStatComponent::InitializeComponent()
 {
 	Super::InitializeComponent();
 
-	if (_actorType == 0)
+	auto ownerActor = GetOwner();
+	if (ownerActor->ActorHasTag(TEXT("Player")))
 		SetPlayerLevel(_level);
-	if (_actorType == 1)
+	else if (ownerActor->ActorHasTag(TEXT("Enemy")))
 		SetMonsterInfo(_index);
-	if (_actorType == 2)
+	else if (ownerActor->ActorHasTag(TEXT("Tower")))
 		SetTowerLevel(_level);
 }
 
@@ -47,6 +48,8 @@ void UHSStatComponent::SetPlayerLevel(int32 Level)
 			_maxHp = statData->MaxHp;
 			SetHp(_maxHp);
 			_attack = statData->Attack;
+			_maxExp = statData->MaxExp;
+			SetExp(_exp);
 		}
 	}
 }
@@ -68,6 +71,7 @@ void UHSStatComponent::SetMonsterInfo(int32 Index)
 			_expPoint = statData->ExpPoint;
 		}
 	}
+	UE_LOG(LogTemp, Warning, TEXT("SetMonsterInfo"));
 }
 
 void UHSStatComponent::SetTowerLevel(int32 Level)
@@ -85,8 +89,7 @@ void UHSStatComponent::SetTowerLevel(int32 Level)
 			SetHp(_maxHp);
 		}
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("SetTowerLevel"));
+	UE_LOG(LogTemp, Warning, TEXT("SetTowerLevel HP:%d"), _maxHp);
 }
 
 void UHSStatComponent::OnAttacked(int32 DamageValue)
@@ -98,6 +101,7 @@ void UHSStatComponent::OnAttacked(int32 DamageValue)
 void UHSStatComponent::SetHp(int32 Hp)
 {
 	_hp = Hp;
+	UE_LOG(LogTemp, Warning, TEXT("SetHp HP:%d"), _hp);
 
 	if (_hp <= 0)
 	{
@@ -106,5 +110,27 @@ void UHSStatComponent::SetHp(int32 Hp)
 	}
 
 	OnHpChanged.Broadcast();
+}
+
+void UHSStatComponent::OnGetExp(int32 ExpValue)
+{
+	_exp += ExpValue;
+	SetExp(_exp);
+}
+
+void UHSStatComponent::SetExp(int32 Exp)
+{
+	_exp = Exp;
+
+	if (_exp >= _maxExp)
+	{
+		_exp = 0;
+		UE_LOG(LogTemp, Error, TEXT("Level Up"));
+		_level++;
+
+		SetPlayerLevel(_level);
+	}
+
+	OnExpChanged.Broadcast();
 }
 

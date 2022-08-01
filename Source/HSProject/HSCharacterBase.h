@@ -21,13 +21,10 @@ protected:
 	virtual void PostInitializeComponents() override;
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
-private:
-	void SetAnimComponent();
-	void SetStatComponent();
-public:
+	virtual void SetAnimComponent();
+	virtual void SetStatComponent();
 
-	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return _cameraComponent; }
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return _springArmComponent; }
+public:
 
 	bool GetMovingState() { return _isMoving; }
 	void SetMovingState(bool isMove) { _isMoving = isMove; }
@@ -49,21 +46,12 @@ public:
 
 	FOnAttackEnd OnAttackEnd;
 
-private:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* _cameraComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* _springArmComponent;
-
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Animation, meta = (AllowPrivateAccess = "true"))
 	class UHSCharacterAnimInstance* _animInstance;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stat, meta = (AllowPrivateAccess = "true"))
 	class UHSStatComponent* _statComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stat, meta = (AllowPrivateAccess = "true"))
-	class UWidgetComponent* _widgetComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
 	bool _isMoving = false;
@@ -79,7 +67,4 @@ private:
 
 	UPROPERTY()
 	FRotator _bulletRotation;
-
-	UPROPERTY()
-	int32 _actorType = 0;
 };

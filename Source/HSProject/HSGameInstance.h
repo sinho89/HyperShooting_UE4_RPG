@@ -80,8 +80,6 @@ public:
 	void CreateLeftMonster();
 	void CreateRightMonster();
 
-	UFUNCTION()
-	AHSActorBase* GetTowerActor() { return _towerActor; }
 private:
 	UPROPERTY()
 	class UDataTable* _playerStats;
@@ -91,10 +89,6 @@ private:
 
 	UPROPERTY()
 	class UDataTable* _towerStats;
-
-
-	UPROPERTY()
-	AHSActorBase* _towerActor;
 
 	UPROPERTY()
 	TMap<int32, AHSCharacterBase*> _objectMap;

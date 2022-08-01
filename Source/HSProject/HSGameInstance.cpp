@@ -4,6 +4,7 @@
 #include <Templates/SharedPointer.h>
 #include "HSCharacterBase.h"
 #include "DrawDebugHelpers.h"
+#include "HSEnemy.h"
 
 UHSGameInstance::UHSGameInstance()
 {
@@ -13,8 +14,6 @@ UHSGameInstance::UHSGameInstance()
 	_monsterStats = MD.Object;
 	static ConstructorHelpers::FObjectFinder<UDataTable> TD(TEXT("DataTable'/Game/Data/TowerStatsData.TowerStatsData'"));
 	_towerStats = TD.Object;
-
-	_towerActor = NULL;
 }
 
 void UHSGameInstance::Init()
@@ -39,7 +38,7 @@ FTowerStatData* UHSGameInstance::GetTowerStatData(int32 Level)
 
 void UHSGameInstance::CreateTower()
 {
-	_towerActor = GetWorld()->SpawnActor<AHSActorBase>();
+	GetWorld()->SpawnActor<AHSActorBase>();
 }
 
 void UHSGameInstance::CreateLeftMonster()
@@ -53,7 +52,7 @@ void UHSGameInstance::CreateLeftMonster()
 	UClass* generatedBP = Cast<UClass>(StaticLoadObject(UClass::StaticClass(), NULL, *path.ToString()));
 
 	if (generatedBP)
-		GetWorld()->SpawnActor<AHSCharacterBase>(generatedBP, spawnLocation, spawnRotator);
+		auto monster = GetWorld()->SpawnActor<AHSEnemy>(generatedBP, spawnLocation, spawnRotator);
 }
 
 void UHSGameInstance::CreateRightMonster()
@@ -65,6 +64,7 @@ void UHSGameInstance::CreateRightMonster()
 	FRotator spawnRotator = FRotator(0.f, spawnDir.Rotation().Yaw, 0.f);
 
 	UClass* generatedBP = Cast<UClass>(StaticLoadObject(UClass::StaticClass(), NULL, *path.ToString()));
+	
 	if (generatedBP)
-		GetWorld()->SpawnActor<AHSCharacterBase>(generatedBP, spawnLocation, spawnRotator);
+		auto monster = GetWorld()->SpawnActor<AHSEnemy>(generatedBP, spawnLocation, spawnRotator);
 }

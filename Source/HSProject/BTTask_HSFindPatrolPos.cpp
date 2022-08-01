@@ -6,6 +6,7 @@
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "HSCharacterBase.h"
+#include "HSEnemy.h"
 
 UBTTask_HSFindPatrolPos::UBTTask_HSFindPatrolPos()
 {
@@ -30,7 +31,7 @@ EBTNodeResult::Type UBTTask_HSFindPatrolPos::ExecuteTask(UBehaviorTreeComponent&
 	if (navSystem->GetRandomPointInNavigableRadius(FVector::ZeroVector, 500.f, randomLocation))
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsVector(FName(TEXT("PatrolPos")), randomLocation.Location);
-		Cast<AHSCharacterBase>(currentPawn)->SetMovingState(true);
+		Cast<AHSEnemy>(currentPawn)->SetMovingState(true);
 		return EBTNodeResult::Succeeded;
 	}
 

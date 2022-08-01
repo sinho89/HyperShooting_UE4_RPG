@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "HSPlayer.h"
 #include "HSProjectGameModeBase.generated.h"
 
 /**
@@ -17,27 +18,24 @@ class HSPROJECT_API AHSProjectGameModeBase : public AGameModeBase
 public:
 	AHSProjectGameModeBase();
 
-	virtual void InitGameState() override;
+	virtual void BeginPlay() override;
+
+	UUserWidget* GetMainGameWidget();
+	AHSPlayer* GetMainGameCharacter() { return _mainGameCharacter; }
 
 private:
 	void SpawnMonster();
-	void InitializeMainUI();
 	void InitializeObjectCreate();
+	void SetMainGameCharacter();
 
 public:
 	UPROPERTY()
+	AHSPlayer* _mainGameCharacter;
+	UPROPERTY()
 	TSubclassOf<UUserWidget> _HUD_Class;
-
 	UPROPERTY()
-	class UUserWidget* _currentWidget;
-
+	UUserWidget* _mainGameWidget;
 	UPROPERTY()
-	class UHSHUD* _mainUIWidget;
-
-	UPROPERTY()
-	FTimerHandle _leftMonsterSpawnTimerHandle;
-	
-	UPROPERTY()
-	FTimerHandle _rightMonsterSpawnTimerHandle;
+	FTimerHandle _monsterSpawnTimerHandle;
 
 };

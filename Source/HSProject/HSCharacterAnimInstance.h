@@ -34,6 +34,8 @@ private:
 	UFUNCTION()
 	void AnimNotify_RightPlant();
 	UFUNCTION()
+	void AnimNotify_AttackHit();
+	UFUNCTION()
 	void AnimNotify_AttackEnd();
 	UFUNCTION()
 	void AnimNotify_DeadEnd();

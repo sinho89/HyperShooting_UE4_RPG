@@ -4,6 +4,7 @@
 #include "BTTask_HSAttack.h"
 #include "HSAIController.h"
 #include "HSCharacterBase.h"
+#include "HSEnemy.h"
 
 UBTTask_HSAttack::UBTTask_HSAttack()
 {
@@ -16,7 +17,7 @@ EBTNodeResult::Type UBTTask_HSAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 	EBTNodeResult::Type result = Super::ExecuteTask(OwnerComp, NodeMemory);
 
 	//auto monster = Cast<AHSMonsterBase>(OwnerComp.GetAIOwner()->GetPawn());
-	auto _pawn = Cast<AHSCharacterBase>(OwnerComp.GetAIOwner()->GetPawn());
+	auto _pawn = Cast<AHSEnemy>(OwnerComp.GetAIOwner()->GetPawn());
 	
 	if (_pawn == nullptr)
 		return EBTNodeResult::Failed;
@@ -39,7 +40,7 @@ void UBTTask_HSAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 	if (_isAttacking == false)
 	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-		auto _pawn = Cast<AHSCharacterBase>(OwnerComp.GetAIOwner()->GetPawn());
+		auto _pawn = Cast<AHSEnemy>(OwnerComp.GetAIOwner()->GetPawn());
 		_pawn->SetAttackingState(false);
 	}
 

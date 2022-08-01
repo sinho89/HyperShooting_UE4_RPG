@@ -54,28 +54,26 @@ void AHSBulletBase::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AAct
 {
 	if (OtherActor && (OtherActor != this) && OtherComp)
 	{
-		if (OtherActor != nullptr)
+		if (OtherActor->ActorHasTag(TEXT("Player")))
+			return;
+
+		if (OtherActor->CanBeDamaged())
 		{
-			if (OtherActor->GetClass()->GetName() == TEXT("BP_Player_C"))
-				return;
-
-			if (OtherActor->CanBeDamaged())
+			if (OtherActor->ActorHasTag(TEXT("Enemy")))
 			{
-				if (OtherActor->GetClass()->GetName() == TEXT("BP_Monster0_C"))
-				{
-					if (Cast<AHSCharacterBase>(OtherActor)->GetDeadState())
-						return;
+				if (Cast<AHSCharacterBase>(OtherActor)->GetDeadState())
+					return;
 
-					FPointDamageEvent damageEvent;
-					//damageEvent.HitInfo = SweepResult;
-					if(_bulletOwner)
-						OtherActor->TakeDamage(_bulletOwner->GetStatComponent()->GetAttack(), damageEvent, _bulletOwner->GetController(), this);
-				}
+				FPointDamageEvent damageEvent;
+				//damageEvent.HitInfo = SweepResult;
+				if(_bulletOwner)
+					OtherActor->TakeDamage(_bulletOwner->GetStatComponent()->GetAttack(), damageEvent, _bulletOwner->GetController(), _bulletOwner);
 			}
-
-			GetWorld()->SpawnActor<AHSHitEffectBase>(GetActorLocation(), GetActorRotation());
-			GetWorld()->DestroyActor(this);
 		}
+
+		GetWorld()->SpawnActor<AHSHitEffectBase>(GetActorLocation(), GetActorRotation());
+		GetWorld()->DestroyActor(this);
+		
 	}
 }
 

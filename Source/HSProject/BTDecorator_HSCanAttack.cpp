@@ -6,6 +6,8 @@
 #include "HSActorBase.h"
 #include "HSCharacterBase.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "HSPlayer.h"
+#include "HSEnemy.h"
 
 UBTDecorator_HSCanAttack::UBTDecorator_HSCanAttack()
 {
@@ -21,12 +23,12 @@ bool UBTDecorator_HSCanAttack::CalculateRawConditionValue(UBehaviorTreeComponent
 	if (currentPawn == nullptr)
 		return false;
 
-	auto target = Cast<AHSActorBase>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(FName(TEXT("Target"))));
+	auto target = Cast<AHSPlayer>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(FName(TEXT("Target"))));
 
 	if (target == nullptr)
 		return false;
 
-	auto pawn = Cast<AHSCharacterBase>(OwnerComp.GetAIOwner()->GetPawn());
+	auto pawn = Cast<AHSEnemy>(OwnerComp.GetAIOwner()->GetPawn());
 
 	if (target->GetDistanceTo(currentPawn) <= 200.f)
 	{

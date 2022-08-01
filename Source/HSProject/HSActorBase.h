@@ -15,7 +15,9 @@ public:
 	AHSActorBase();
 
 protected:
+	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 private:
 	UPROPERTY(VisibleAnywhere)
@@ -27,11 +29,11 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class UParticleSystemComponent* _towerEffect;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stat, meta = (AllowPrivateAccess = "true"))
 	class UHSStatComponent* _statComponent;
 
-	UPROPERTY(VisibleAnywhere)
-	class UWidgetComponent* _widgetComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stat, meta = (AllowPrivateAccess = "true"))
+	class UWidgetComponent* _towerHpWidgetComponent;
 
 	UPROPERTY()
 	int32 _actorType = 0;

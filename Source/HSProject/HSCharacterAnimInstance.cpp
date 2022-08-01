@@ -8,6 +8,9 @@
 #include <Particles/ParticleSystemComponent.h>
 #include <Components/BoxComponent.h>
 #include "HSStatComponent.h"
+#include "HSEnemy.h"
+#include "HSPlayer.h"
+#include "DrawDebugHelpers.h"
 
 UHSCharacterAnimInstance::UHSCharacterAnimInstance()
 {
@@ -42,6 +45,7 @@ void UHSCharacterAnimInstance::AnimNotify_StartPlay()
 
 	if (IsValid(_character))
 		_character->SetPlayStart(true);
+
 }
 
 void UHSCharacterAnimInstance::AnimNotify_Fire()
@@ -66,6 +70,56 @@ void UHSCharacterAnimInstance::AnimNotify_LeftPlant()
 void UHSCharacterAnimInstance::AnimNotify_RightPlant()
 {
 
+}
+
+void UHSCharacterAnimInstance::AnimNotify_AttackHit()
+{
+	FHitResult hitResult;
+	FCollisionQueryParams params(NAME_None, false, _character);
+
+	float attackRange = 10.f;
+	float attackRadius = 200.f;
+
+	bool bResult = GetWorld()->SweepSingleByChannel(
+		OUT hitResult,
+		_character->GetActorLocation(),
+		_character->GetActorLocation() + _character->GetActorForwardVector() * attackRange,
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel18,
+		FCollisionShape::MakeSphere(attackRadius),
+		params);
+
+	FVector Vec = _character->GetActorForwardVector() * attackRange;
+	FVector Center = _character->GetActorLocation() + Vec * 0.5f;
+	float HalfHeight = attackRange * 0.5f + attackRadius;
+	FQuat Rotation = FRotationMatrix::MakeFromZ(Vec).ToQuat();
+	FColor DrawColor;
+
+	if (bResult)
+		DrawColor = FColor::Green;
+	else
+		DrawColor = FColor::Red;
+
+	DrawDebugCapsule(GetWorld(), Center, HalfHeight, attackRadius,
+		Rotation, DrawColor, false, 2.f);
+
+	if (bResult && hitResult.Actor.IsValid())
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s"), *hitResult.Actor->GetName());
+		if (hitResult.Actor->ActorHasTag(TEXT("Player")))
+		{
+			FPointDamageEvent damageEvent;
+
+			if (_character->ActorHasTag(TEXT("Enemy")))
+			{
+				auto enemy = Cast<AHSEnemy>(_character);
+				hitResult.Actor->TakeDamage(
+					enemy->GetStatComponent()->GetAttack(),
+					damageEvent, enemy->GetController(), enemy);
+			}
+		}
+
+	}
 }
 
 void UHSCharacterAnimInstance::AnimNotify_AttackEnd()

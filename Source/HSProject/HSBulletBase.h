@@ -18,9 +18,9 @@ protected:
 	virtual void PostInitializeComponents() override;
 
 public:
-
 	UFUNCTION()
 	void SetBulletOwner(AHSCharacterBase* BulletOwner) { _bulletOwner = BulletOwner; }
+
 private:
 	UFUNCTION()
 		void OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,

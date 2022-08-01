@@ -4,9 +4,14 @@
 #include <Components/WidgetComponent.h>
 #include "HSHUD.h"
 #include "HSStatComponent.h"
+#include "HSGameInstance.h"
+#include <Kismet/GameplayStatics.h>
+#include "HSTowerHpWidget.h"
 
 AHSActorBase::AHSActorBase()
 {
+	Tags.Add(TEXT("Tower"));
+
 	SetCanBeDamaged(true);
 
 	_trigger = CreateDefaultSubobject<UCapsuleComponent>(TEXT("TOWERTRIGER"));
@@ -45,33 +50,57 @@ AHSActorBase::AHSActorBase()
 
 	_statComponent = CreateDefaultSubobject<UHSStatComponent>(TEXT("STAT"));
 
-	if (_statComponent)
+	_towerHpWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBAR"));
+	_towerHpWidgetComponent->SetWidgetSpace(EWidgetSpace::World);
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> UW(TEXT("WidgetBlueprint'/Game/UI/WBP_TowerHpBar.WBP_TowerHpBar_C'"));
+
+	if (UW.Succeeded())
 	{
-		_statComponent->SetActorType(2); // Tower
-		_actorType = 2;
-	}
-
-	static ConstructorHelpers::FClassFinder<UHSHUD> UI_HUD(TEXT("WidgetBlueprint'/Game/UI/WBP_HSHUD.WBP_HSHUD_C'"));
-	if (UI_HUD.Succeeded())
-	{
-		_widgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("MAINUI"));
-
-		if (_widgetComponent)
-			_widgetComponent->SetWidgetClass(UI_HUD.Class);
-
+		_towerHpWidgetComponent->SetWidgetClass(UW.Class);
+		_towerHpWidgetComponent->SetDrawSize(FVector2D(600.f, 100.f));
+		
 	}
 
  	PrimaryActorTick.bCanEverTick = false;
+}
+
+void AHSActorBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	/*auto gameInstance = Cast<UHSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	auto mainWidget = Cast<UHSHUD>(gameInstance->GetMainWidget());
+
+	if (mainWidget)
+		mainWidget->BindHp(_statComponent);*/
 }
 
 void AHSActorBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	_widgetComponent->InitWidget();
-	auto HpWidget = Cast<UHSHUD>(_widgetComponent->GetUserWidgetObject());
+	_towerHpWidgetComponent->InitWidget();
+
+	auto HpWidget = Cast<UHSTowerHpWidget>(_towerHpWidgetComponent->GetUserWidgetObject());
 
 	if (HpWidget)
+	{
+		HpWidget->AddToViewport(1);
 		HpWidget->BindHp(_statComponent);
+	}
+}
+
+float AHSActorBase::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float damage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+
+	if (_statComponent)
+	{
+		_statComponent->OnAttacked(damage);
+	}
+
+	return damage;
 }
 

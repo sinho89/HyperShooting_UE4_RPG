@@ -7,6 +7,7 @@
 #include <Kismet/GameplayStatics.h>
 #include "HSGameInstance.h"
 #include "HSHUD.h"
+#include "HSPlayer.h"
 
 AHSProjectGameModeBase::AHSProjectGameModeBase()
 {
@@ -18,23 +19,32 @@ AHSProjectGameModeBase::AHSProjectGameModeBase()
 		DefaultPawnClass = BP_Player.Class;
 	}
 
-	static ConstructorHelpers::FClassFinder<UHSHUD> UI_HUD(TEXT("WidgetBlueprint'/Game/UI/WBP_HSHUD.WBP_HSHUD_C'"));
+	static ConstructorHelpers::FClassFinder<UHSHUD> UI_HUD(TEXT("WidgetBlueprint'/Game/UI/WBP_MainGame.WBP_MainGame_C'"));
 	if (UI_HUD.Succeeded())
 	{
 		_HUD_Class = UI_HUD.Class;
-		_currentWidget = CreateWidget(GetWorld(), _HUD_Class);
-		
-		if (_currentWidget)
-			_currentWidget->AddToViewport();
+
+		_mainGameWidget = CreateWidget(GetWorld(), _HUD_Class);
+
+		if (_mainGameWidget)
+		{
+			_mainGameWidget->AddToViewport();
+			//_mainGameWidget->RemoveFromViewport();
+		}
 	}
 }
 
-void AHSProjectGameModeBase::InitGameState()
+void AHSProjectGameModeBase::BeginPlay()
 {
-	Super::InitGameState();
+	Super::BeginPlay();
 
-	InitializeMainUI();
+	SetMainGameCharacter();
 	InitializeObjectCreate();
+}
+
+UUserWidget* AHSProjectGameModeBase::GetMainGameWidget()
+{
+	return _mainGameWidget;
 }
 
 void AHSProjectGameModeBase::SpawnMonster()
@@ -45,15 +55,15 @@ void AHSProjectGameModeBase::SpawnMonster()
 	gameInstance->CreateRightMonster();
 }
 
-void AHSProjectGameModeBase::InitializeMainUI()
-{
-
-}
-
 void AHSProjectGameModeBase::InitializeObjectCreate()
 {
 	auto gameInstance = Cast<UHSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	gameInstance->CreateTower();
-	GetWorldTimerManager().SetTimer(_leftMonsterSpawnTimerHandle, this, &AHSProjectGameModeBase::SpawnMonster, 7.0f, true);
+	GetWorldTimerManager().SetTimer(_monsterSpawnTimerHandle, this, &AHSProjectGameModeBase::SpawnMonster, 7.0f, true, 7.0f);
+}
+
+void AHSProjectGameModeBase::SetMainGameCharacter()
+{
+	_mainGameCharacter = Cast<AHSPlayer>(GetWorld()->GetFirstPlayerController()->GetPawn());
 }
 

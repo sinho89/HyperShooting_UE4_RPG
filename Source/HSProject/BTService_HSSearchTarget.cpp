@@ -3,10 +3,11 @@
 
 #include "BTService_HSSearchTarget.h"
 #include "HSAIController.h"
-#include "HSActorBase.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "HSGameInstance.h"
 #include <Kismet/GameplayStatics.h>
+#include "HSPlayer.h"
+#include "HSProjectGameModeBase.h"
 
 UBTService_HSSearchTarget::UBTService_HSSearchTarget()
 {
@@ -23,9 +24,9 @@ void UBTService_HSSearchTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint
 	if (currentPawn == nullptr)
 		return;
 
-	auto gameInstance = Cast<UHSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	auto gameMode = Cast<AHSProjectGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
 
-	AHSActorBase* target = Cast<AHSActorBase>(gameInstance->GetTowerActor());
+	AHSPlayer* target = Cast<AHSPlayer>(gameMode->GetMainGameCharacter());
 
 	if (target)
 	{
