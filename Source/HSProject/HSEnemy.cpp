@@ -10,6 +10,10 @@
 #include "HSStatComponent.h"
 #include "HSWorldWidget.h"
 #include "HSPlayer.h"
+#include "HSActorBase.h"
+#include "HSProjectGameModeBase.h"
+#include <Kismet/GameplayStatics.h>
+#include "HSGameInstance.h"
 
 AHSEnemy::AHSEnemy()
 {
@@ -36,6 +40,8 @@ AHSEnemy::AHSEnemy()
 		_worldHpWidgetComponent->SetWidgetClass(UW.Class);
 		_worldHpWidgetComponent->SetDrawSize(FVector2D(300.f, 50.f));
 	}
+
+	_uniqueID = 0;
 
 	PrimaryActorTick.bCanEverTick = false;
 }
@@ -68,10 +74,17 @@ float AHSEnemy::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContr
 	
 	if (_statComponent->GetHp() <= 0)
 	{
-		Cast<AHSPlayer>(DamageCauser)->GetStatComponent()->OnGetExp(_statComponent->GetExpPoint());
+		AHSPlayer* mainGameCharacter = Cast<AHSProjectGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()))->GetMainGameCharacter();
+		mainGameCharacter->GetStatComponent()->OnGetExp(_statComponent->GetExpPoint());
+		
 		GetCharacterMovement()->SetMovementMode(MOVE_None);
 		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		
+		UHSGameInstance* gameInstance = Cast<UHSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+		TMap<int32, AHSEnemy*>* enemyMap = gameInstance->GetEnemyMap();
+		enemyMap->Remove(_uniqueID);
+		gameInstance->GetTower()->DeleteTarget();
 	}
 		
 	return damage;

@@ -25,6 +25,14 @@ private:
 public:
 	UFUNCTION()
 	UHSStatComponent* GetStatComponent() { return _statComponent; }
+
+	UFUNCTION()
+	AHSEnemy* GetTarget() { return _target; }
+	void SetTarget(AHSEnemy* Target) { _target = Target; }
+
+	void DeleteTarget() { _target = nullptr; }
+
+
 private:
 	UPROPERTY(VisibleAnywhere)
 	class UStaticMeshComponent* _staticMesh;
@@ -40,6 +48,9 @@ private:
 
 	UPROPERTY()
 	FTimerHandle _bulletFireTimerHandle;
+
+	UPROPERTY()
+	class AHSEnemy* _target;
 
 	UPROPERTY()
 	int32 _actorType = 0;

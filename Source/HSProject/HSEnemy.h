@@ -17,6 +17,8 @@ class HSPROJECT_API AHSEnemy : public AHSCharacterBase
 public:
 	AHSEnemy();
 
+	void SetUniqueId(int32 Id) { _uniqueID = Id; }
+
 protected:
 	virtual void PreInitializeComponents() override;
 	virtual void PostInitializeComponents() override;
@@ -29,4 +31,6 @@ protected:
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stat, meta = (AllowPrivateAccess = "true"))
 	class UWidgetComponent* _worldHpWidgetComponent;
+
+	int32 _uniqueID;
 };

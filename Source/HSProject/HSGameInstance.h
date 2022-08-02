@@ -76,13 +76,19 @@ public:
 	FMonsterStatData* GetMonsterStatData(int32 Index);
 	FTowerStatData* GetTowerStatData(int32 Level);
 
-	FVector GetCloserEnemyDirectionByTower();
+	AHSEnemy* GetCloserEnemyByTower();
+
+	UFUNCTION()
+	AHSActorBase* GetTower() { return _tower; }
+
+	TMap<int32, AHSEnemy*>* GetEnemyMap() { return &_enemyMap; }
 
 
 	void CreateTower();
 	void CreateLeftMonster();
 	void CreateRightMonster();
 
+	int32 _monsterUniqueIndex;
 private:
 	UPROPERTY()
 	class UDataTable* _playerStats;
@@ -93,6 +99,10 @@ private:
 	UPROPERTY()
 	class UDataTable* _towerStats;
 
+
 	UPROPERTY()
 	TMap<int32, AHSEnemy*> _enemyMap;
+
+	UPROPERTY()
+	AHSActorBase* _tower;
 };

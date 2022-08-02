@@ -2,7 +2,7 @@
 #include "HSActorBase.h"
 #include <Serialization/JsonReader.h>
 #include <Templates/SharedPointer.h>
-#include "HSCharacterBase.h"
+#include "HSPlayer.h"
 #include "DrawDebugHelpers.h"
 #include "HSStatComponent.h"
 #include "HSEnemy.h"
@@ -15,6 +15,10 @@ UHSGameInstance::UHSGameInstance()
 	_monsterStats = MD.Object;
 	static ConstructorHelpers::FObjectFinder<UDataTable> TD(TEXT("DataTable'/Game/Data/TowerStatsData.TowerStatsData'"));
 	_towerStats = TD.Object;
+
+	_tower = nullptr;
+
+	_monsterUniqueIndex = 0;
 }
 
 void UHSGameInstance::Init()
@@ -37,34 +41,38 @@ FTowerStatData* UHSGameInstance::GetTowerStatData(int32 Level)
 	return _towerStats->FindRow<FTowerStatData>(*FString::FromInt(Level), TEXT(""));
 }
 
-FVector UHSGameInstance::GetCloserEnemyDirectionByTower()
+AHSEnemy* UHSGameInstance::GetCloserEnemyByTower()
 {
-	FVector resultVector = FVector::ZeroVector;
+	AHSEnemy* resultActor = nullptr;
 	FVector startLocation = FVector(0.f, 0.f, 500.f);
 	float compareDistance = 3000.f;
 
+	UE_LOG(LogTemp, Error, TEXT("%d"), _enemyMap.Num());
+
 	if (_enemyMap.Num() <= 0)
-		return FVector::ZeroVector;
+		return nullptr;
 
 	for (auto& enemy : _enemyMap)
 	{
 		float distance = (enemy.Value->GetActorLocation() - startLocation).Size();
 
 		if(compareDistance > distance)
-			resultVector = enemy.Value->GetActorLocation() - startLocation;
+			resultActor = enemy.Value;
 
 		compareDistance = distance;
 	}
 
 	if (compareDistance >= 3000.f)
-		return FVector::ZeroVector;
+		return nullptr;
 
-	return resultVector;
+	_tower->SetTarget(resultActor);
+
+	return resultActor;
 }
 
 void UHSGameInstance::CreateTower()
 {
-	GetWorld()->SpawnActor<AHSActorBase>();
+	_tower = GetWorld()->SpawnActor<AHSActorBase>();
 }
 
 void UHSGameInstance::CreateLeftMonster()
@@ -84,7 +92,9 @@ void UHSGameInstance::CreateLeftMonster()
 		if (enemy)
 		{
 			int32 index = Cast<AHSCharacterBase>(enemy)->GetStatComponent()->GetIndex();
-			_enemyMap.Add(index, enemy);
+			_enemyMap.Add(_monsterUniqueIndex, enemy);
+			enemy->SetUniqueId(_monsterUniqueIndex);
+			_monsterUniqueIndex++;
 		}
 	}
 }
@@ -106,7 +116,9 @@ void UHSGameInstance::CreateRightMonster()
 		if (enemy)
 		{
 			int32 index = Cast<AHSCharacterBase>(enemy)->GetStatComponent()->GetIndex();
-			_enemyMap.Add(index, enemy);
+			_enemyMap.Add(_monsterUniqueIndex, enemy);
+			enemy->SetUniqueId(_monsterUniqueIndex);
+			_monsterUniqueIndex++;
 		}
 	}
 }

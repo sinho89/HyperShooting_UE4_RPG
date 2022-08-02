@@ -28,4 +28,6 @@ void UHSHUD::UpdateExp()
 {
 	if (_currentStatComp.IsValid())
 		PB_ExpBar->SetPercent(_currentStatComp->GetExpRatio());
+	
+	UE_LOG(LogTemp, Warning, TEXT("Exp Update"));
 }

@@ -37,6 +37,7 @@ AHSBulletBase::AHSBulletBase()
 	_moveComponent->ProjectileGravityScale = 0.f;
 	_moveComponent->bInitialVelocityInLocalSpace = true;
 	
+	_bulletOwner = nullptr;
 
 	PrimaryActorTick.bCanEverTick = false;
 

@@ -3,7 +3,7 @@
 
 #include "HSPlayerControllerBase.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
-#include "HSCharacterBase.h"
+#include "HSPlayer.h"
 #include "Engine/World.h"
 
 AHSPlayerControllerBase::AHSPlayerControllerBase()
@@ -21,7 +21,7 @@ void AHSPlayerControllerBase::BeginPlayingState()
 {
 	Super::BeginPlayingState();
 
-	_player = Cast<AHSCharacterBase>(GetPawn());
+	_player = Cast<AHSPlayer>(GetPawn());
 
 	if (IsValid(_player))
 		_moveToPos = _player->GetActorLocation();

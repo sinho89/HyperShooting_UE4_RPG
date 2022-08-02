@@ -9,6 +9,7 @@
 #include "HSTowerHpWidget.h"
 #include "HSBulletBase.h"
 #include "HSTowerBulletBase.h"
+#include "HSEnemy.h"
 
 AHSActorBase::AHSActorBase()
 {
@@ -52,6 +53,8 @@ AHSActorBase::AHSActorBase()
 
 	_statComponent = CreateDefaultSubobject<UHSStatComponent>(TEXT("STAT"));
 
+	_target = nullptr;
+
  	PrimaryActorTick.bCanEverTick = false;
 }
 
@@ -81,13 +84,14 @@ float AHSActorBase::TakeDamage(float Damage, struct FDamageEvent const& DamageEv
 void AHSActorBase::SpawnTowerBullet()
 {
 	UHSGameInstance* gameInstance = Cast<UHSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	
-	FVector attackDir = gameInstance->GetCloserEnemyDirectionByTower();
 
-	if (attackDir == FVector::ZeroVector)
+	if(_target == nullptr)
+		_target = gameInstance->GetCloserEnemyByTower();
+
+	if (_target == nullptr)
 		return;
 
-	//FRotator attackRotation = FRotator(0.f, attackDir.Rotation().Yaw, 0.f);
+	FVector attackDir = _target->GetActorLocation() - _towerEffect->GetRelativeLocation();
 	FRotator attackRotation = attackDir.Rotation();
 	auto bullet = GetWorld()->SpawnActor<AHSTowerBulletBase>(_towerEffect->GetRelativeLocation() + FVector::UpVector * 1.0f, attackRotation);;
 	if (bullet)

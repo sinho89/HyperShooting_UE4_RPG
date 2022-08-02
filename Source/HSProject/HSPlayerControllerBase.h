@@ -25,7 +25,7 @@ protected:
 private:
 
 	UPROPERTY()
-	class AHSCharacterBase* _player;
+	class AHSPlayer* _player;
 
 	UPROPERTY()
 	bool _isMoveClick;
