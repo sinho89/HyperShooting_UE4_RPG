@@ -1,17 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "HSBulletBase.h"
+#include "HSTowerBulletBase.h"
 #include <Particles/ParticleSystemComponent.h>
 #include <GameFramework/ProjectileMovementComponent.h>
 #include "DrawDebugHelpers.h"
 #include <Components/BoxComponent.h>
 #include "HSHitEffectBase.h"
-#include "HSCharacterBase.h"
+#include "HSActorBase.h"
 #include "HSStatComponent.h"
 
 // Sets default values
-AHSBulletBase::AHSBulletBase()
+AHSTowerBulletBase::AHSTowerBulletBase()
 {
 	_bulletEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("BULLETEFFECT"));
 	_trigger = CreateDefaultSubobject<UBoxComponent>(TEXT("BULLETTRIGER"));
@@ -36,25 +36,25 @@ AHSBulletBase::AHSBulletBase()
 	_moveComponent->InitialSpeed = 3000.f;
 	_moveComponent->ProjectileGravityScale = 0.f;
 	_moveComponent->bInitialVelocityInLocalSpace = true;
-	
+
 
 	PrimaryActorTick.bCanEverTick = false;
 
 }
 
-void AHSBulletBase::PostInitializeComponents()
+void AHSTowerBulletBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	if(IsValid(_trigger))
-		_trigger->OnComponentBeginOverlap.AddDynamic(this, &AHSBulletBase::OnCharacterOverlap);
+	if (IsValid(_trigger))
+		_trigger->OnComponentBeginOverlap.AddDynamic(this, &AHSTowerBulletBase::OnCharacterOverlap);
 }
 
-void AHSBulletBase::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AHSTowerBulletBase::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor && (OtherActor != this) && OtherComp)
 	{
-		if (OtherActor->ActorHasTag(TEXT("Player")))
+		if (OtherActor->ActorHasTag(TEXT("Tower")))
 			return;
 
 		if (OtherActor->CanBeDamaged())
@@ -62,14 +62,14 @@ void AHSBulletBase::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AAct
 			if (OtherActor->ActorHasTag(TEXT("Enemy")))
 			{
 				FPointDamageEvent damageEvent;
-				if(_bulletOwner)
-					OtherActor->TakeDamage(_bulletOwner->GetStatComponent()->GetAttack(), damageEvent, _bulletOwner->GetController(), _bulletOwner);
+				if (_bulletOwner)
+					OtherActor->TakeDamage(_bulletOwner->GetStatComponent()->GetAttack(), damageEvent, NULL, _bulletOwner);
 			}
 		}
 
 		GetWorld()->SpawnActor<AHSHitEffectBase>(GetActorLocation(), GetActorRotation());
 		GetWorld()->DestroyActor(this);
-		
+
 	}
 }
 

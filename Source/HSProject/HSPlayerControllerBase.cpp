@@ -14,6 +14,7 @@ AHSPlayerControllerBase::AHSPlayerControllerBase()
 	_isAttackClick = false;
 	_isStartPlay = false;
 	_moveDistance = 120.f;
+	_player = NULL;
 }
 
 void AHSPlayerControllerBase::BeginPlayingState()

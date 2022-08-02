@@ -12,20 +12,15 @@
 
 AHSCharacterBase::AHSCharacterBase()
 {
-	SetCanBeDamaged(true);
-
-	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -96.f), FRotator(0.f, 0.f, 180.f));
-
-	_statComponent = CreateDefaultSubobject<UHSStatComponent>(TEXT("STAT"));
-	_bulletRotation = FRotator::ZeroRotator;
-
-	PrimaryActorTick.bCanEverTick = false;
-	PrimaryActorTick.bStartWithTickEnabled = true;
+	
+	//PrimaryActorTick.bStartWithTickEnabled = true;
 }
 
-void AHSCharacterBase::BeginPlay()
+void AHSCharacterBase::PreInitializeComponents()
 {
-	Super::BeginPlay();
+	Super::PreInitializeComponents();
+
+	_bulletRotation = FRotator::ZeroRotator;
 }
 
 void AHSCharacterBase::PostInitializeComponents()
@@ -34,6 +29,11 @@ void AHSCharacterBase::PostInitializeComponents()
 
 	SetAnimComponent();
 	SetStatComponent();
+}
+
+void AHSCharacterBase::BeginPlay()
+{
+	Super::BeginPlay();
 }
 
 float AHSCharacterBase::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

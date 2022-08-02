@@ -19,6 +19,7 @@ public:
 	AHSProjectGameModeBase();
 
 	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
 
 	UUserWidget* GetMainGameWidget();
 	AHSPlayer* GetMainGameCharacter() { return _mainGameCharacter; }

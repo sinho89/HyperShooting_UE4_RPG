@@ -23,14 +23,6 @@ AHSProjectGameModeBase::AHSProjectGameModeBase()
 	if (UI_HUD.Succeeded())
 	{
 		_HUD_Class = UI_HUD.Class;
-
-		_mainGameWidget = CreateWidget(GetWorld(), _HUD_Class);
-
-		if (_mainGameWidget)
-		{
-			_mainGameWidget->AddToViewport();
-			//_mainGameWidget->RemoveFromViewport();
-		}
 	}
 }
 
@@ -40,6 +32,16 @@ void AHSProjectGameModeBase::BeginPlay()
 
 	SetMainGameCharacter();
 	InitializeObjectCreate();
+}
+
+void AHSProjectGameModeBase::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	_mainGameWidget = CreateWidget(GetWorld(), _HUD_Class);
+
+	if (_mainGameWidget)
+		_mainGameWidget->AddToViewport();
 }
 
 UUserWidget* AHSProjectGameModeBase::GetMainGameWidget()

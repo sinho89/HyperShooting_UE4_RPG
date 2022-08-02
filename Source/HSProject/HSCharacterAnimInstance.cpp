@@ -18,6 +18,7 @@ UHSCharacterAnimInstance::UHSCharacterAnimInstance()
 	_isAttacking = false;
 	_isDead = false;
 	_isStartPlay = false;
+	_character = NULL;
 }
 
 void UHSCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -74,48 +75,39 @@ void UHSCharacterAnimInstance::AnimNotify_RightPlant()
 
 void UHSCharacterAnimInstance::AnimNotify_AttackHit()
 {
-	FHitResult hitResult;
-	FCollisionQueryParams params(NAME_None, false, _character);
+	TArray<FHitResult> overlapResults;
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(_character);
 
-	float attackRange = 10.f;
-	float attackRadius = 200.f;
+	float attackRange = 150.f;
+	float attackRadius = 50.f;
 
-	bool bResult = GetWorld()->SweepSingleByChannel(
-		OUT hitResult,
+	bool bResult = GetWorld()->SweepMultiByChannel(
+		OUT overlapResults,
 		_character->GetActorLocation(),
-		_character->GetActorLocation() + _character->GetActorForwardVector() * attackRange,
+		_character->GetActorLocation() + _character->GetActorForwardVector() * attackRange + _character->GetActorUpVector() * 1.0f,
 		FQuat::Identity,
-		ECollisionChannel::ECC_GameTraceChannel18,
+		ECollisionChannel::ECC_GameTraceChannel2,
 		FCollisionShape::MakeSphere(attackRadius),
-		params);
-
-	FVector Vec = _character->GetActorForwardVector() * attackRange;
-	FVector Center = _character->GetActorLocation() + Vec * 0.5f;
-	float HalfHeight = attackRange * 0.5f + attackRadius;
-	FQuat Rotation = FRotationMatrix::MakeFromZ(Vec).ToQuat();
-	FColor DrawColor;
+		QueryParams);
 
 	if (bResult)
-		DrawColor = FColor::Green;
-	else
-		DrawColor = FColor::Red;
-
-	DrawDebugCapsule(GetWorld(), Center, HalfHeight, attackRadius,
-		Rotation, DrawColor, false, 2.f);
-
-	if (bResult && hitResult.Actor.IsValid())
 	{
-		UE_LOG(LogTemp, Error, TEXT("%s"), *hitResult.Actor->GetName());
-		if (hitResult.Actor->ActorHasTag(TEXT("Player")))
+		for (auto& overlapResult : overlapResults)
 		{
-			FPointDamageEvent damageEvent;
-
-			if (_character->ActorHasTag(TEXT("Enemy")))
+			if (overlapResult.GetActor()->ActorHasTag(TEXT("Player")))
 			{
-				auto enemy = Cast<AHSEnemy>(_character);
-				hitResult.Actor->TakeDamage(
-					enemy->GetStatComponent()->GetAttack(),
-					damageEvent, enemy->GetController(), enemy);
+				if (_character->ActorHasTag(TEXT("Enemy")))
+				{
+					FPointDamageEvent damageEvent;
+					auto enemy = Cast<AHSEnemy>(_character);
+					overlapResult.GetActor()->TakeDamage(
+						enemy->GetStatComponent()->GetAttack(),
+						damageEvent, enemy->GetController(), enemy);
+
+					UE_LOG(LogTemp, Error, TEXT("Collision Player"));
+					break;
+				}
 			}
 		}
 

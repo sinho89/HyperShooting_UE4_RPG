@@ -7,12 +7,14 @@
 #include "HSGameInstance.h"
 #include <Kismet/GameplayStatics.h>
 #include "HSTowerHpWidget.h"
+#include "HSBulletBase.h"
+#include "HSTowerBulletBase.h"
 
 AHSActorBase::AHSActorBase()
 {
 	Tags.Add(TEXT("Tower"));
 
-	SetCanBeDamaged(true);
+	SetCanBeDamaged(false);
 
 	_trigger = CreateDefaultSubobject<UCapsuleComponent>(TEXT("TOWERTRIGER"));
 	_towerEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("TOWEREFFECT"));
@@ -50,46 +52,18 @@ AHSActorBase::AHSActorBase()
 
 	_statComponent = CreateDefaultSubobject<UHSStatComponent>(TEXT("STAT"));
 
-	_towerHpWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBAR"));
-	_towerHpWidgetComponent->SetWidgetSpace(EWidgetSpace::World);
-
-	static ConstructorHelpers::FClassFinder<UUserWidget> UW(TEXT("WidgetBlueprint'/Game/UI/WBP_TowerHpBar.WBP_TowerHpBar_C'"));
-
-	if (UW.Succeeded())
-	{
-		_towerHpWidgetComponent->SetWidgetClass(UW.Class);
-		_towerHpWidgetComponent->SetDrawSize(FVector2D(600.f, 100.f));
-		
-	}
-
  	PrimaryActorTick.bCanEverTick = false;
 }
 
 void AHSActorBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-	/*auto gameInstance = Cast<UHSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-
-	auto mainWidget = Cast<UHSHUD>(gameInstance->GetMainWidget());
-
-	if (mainWidget)
-		mainWidget->BindHp(_statComponent);*/
+	GetWorldTimerManager().SetTimer(_bulletFireTimerHandle, this, &AHSActorBase::SpawnTowerBullet, 1.0f, true, 1.0f);
 }
 
 void AHSActorBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
-	_towerHpWidgetComponent->InitWidget();
-
-	auto HpWidget = Cast<UHSTowerHpWidget>(_towerHpWidgetComponent->GetUserWidgetObject());
-
-	if (HpWidget)
-	{
-		HpWidget->AddToViewport(1);
-		HpWidget->BindHp(_statComponent);
-	}
 }
 
 float AHSActorBase::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -102,5 +76,21 @@ float AHSActorBase::TakeDamage(float Damage, struct FDamageEvent const& DamageEv
 	}
 
 	return damage;
+}
+
+void AHSActorBase::SpawnTowerBullet()
+{
+	UHSGameInstance* gameInstance = Cast<UHSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	
+	FVector attackDir = gameInstance->GetCloserEnemyDirectionByTower();
+
+	if (attackDir == FVector::ZeroVector)
+		return;
+
+	//FRotator attackRotation = FRotator(0.f, attackDir.Rotation().Yaw, 0.f);
+	FRotator attackRotation = attackDir.Rotation();
+	auto bullet = GetWorld()->SpawnActor<AHSTowerBulletBase>(_towerEffect->GetRelativeLocation() + FVector::UpVector * 1.0f, attackRotation);;
+	if (bullet)
+		bullet->SetBulletOwner(this);
 }
 

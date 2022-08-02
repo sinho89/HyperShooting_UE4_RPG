@@ -17,8 +17,9 @@ public:
 	AHSCharacterBase();
 
 protected:
-	virtual void BeginPlay() override;
+	virtual void PreInitializeComponents() override;
 	virtual void PostInitializeComponents() override;
+	virtual void BeginPlay() override;
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	virtual void SetAnimComponent();

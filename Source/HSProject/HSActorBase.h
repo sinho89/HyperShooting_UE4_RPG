@@ -20,6 +20,12 @@ protected:
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 private:
+	void SpawnTowerBullet();
+
+public:
+	UFUNCTION()
+	UHSStatComponent* GetStatComponent() { return _statComponent; }
+private:
 	UPROPERTY(VisibleAnywhere)
 	class UStaticMeshComponent* _staticMesh;
 
@@ -32,8 +38,8 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stat, meta = (AllowPrivateAccess = "true"))
 	class UHSStatComponent* _statComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stat, meta = (AllowPrivateAccess = "true"))
-	class UWidgetComponent* _towerHpWidgetComponent;
+	UPROPERTY()
+	FTimerHandle _bulletFireTimerHandle;
 
 	UPROPERTY()
 	int32 _actorType = 0;

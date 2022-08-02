@@ -85,6 +85,7 @@ void UHSStatComponent::SetTowerLevel(int32 Level)
 		if (statData)
 		{
 			_level = statData->Level;
+			_attack = statData->Attack;
 			_maxHp = statData->MaxHp;
 			SetHp(_maxHp);
 		}

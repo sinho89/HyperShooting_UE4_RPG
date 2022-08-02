@@ -14,7 +14,11 @@
 AHSPlayer::AHSPlayer()
 {
 	Tags.Add("Player");
-	UE_LOG(LogTemp, Error, TEXT("Player Init"));
+
+	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -96.f), FRotator(0.f, 0.f, 180.f));
+
+	_statComponent = CreateDefaultSubobject<UHSStatComponent>(TEXT("STAT"));
+
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
 	bUseControllerRotationPitch = false;
@@ -37,13 +41,24 @@ AHSPlayer::AHSPlayer()
 	_cameraComponent->SetupAttachment(_springArmComponent, USpringArmComponent::SocketName);
 	_cameraComponent->bUsePawnControlRotation = false;
 
+	PrimaryActorTick.bCanEverTick = false;
+}
+
+void AHSPlayer::PreInitializeComponents()
+{
+	Super::PreInitializeComponents();
+}
+
+void AHSPlayer::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
 }
 
 void AHSPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AHSProjectGameModeBase* gameMode= Cast<AHSProjectGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
+	AHSProjectGameModeBase* gameMode = Cast<AHSProjectGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
 
 	auto mainWidget = Cast<UHSHUD>(gameMode->GetMainGameWidget());
 
@@ -52,11 +67,6 @@ void AHSPlayer::BeginPlay()
 		mainWidget->BindHp(_statComponent);
 		mainWidget->BindExp(_statComponent);
 	}
-}
-
-void AHSPlayer::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
 }
 
 float AHSPlayer::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

@@ -4,6 +4,7 @@
 #include <Templates/SharedPointer.h>
 #include "HSCharacterBase.h"
 #include "DrawDebugHelpers.h"
+#include "HSStatComponent.h"
 #include "HSEnemy.h"
 
 UHSGameInstance::UHSGameInstance()
@@ -36,6 +37,31 @@ FTowerStatData* UHSGameInstance::GetTowerStatData(int32 Level)
 	return _towerStats->FindRow<FTowerStatData>(*FString::FromInt(Level), TEXT(""));
 }
 
+FVector UHSGameInstance::GetCloserEnemyDirectionByTower()
+{
+	FVector resultVector = FVector::ZeroVector;
+	FVector startLocation = FVector(0.f, 0.f, 500.f);
+	float compareDistance = 3000.f;
+
+	if (_enemyMap.Num() <= 0)
+		return FVector::ZeroVector;
+
+	for (auto& enemy : _enemyMap)
+	{
+		float distance = (enemy.Value->GetActorLocation() - startLocation).Size();
+
+		if(compareDistance > distance)
+			resultVector = enemy.Value->GetActorLocation() - startLocation;
+
+		compareDistance = distance;
+	}
+
+	if (compareDistance >= 3000.f)
+		return FVector::ZeroVector;
+
+	return resultVector;
+}
+
 void UHSGameInstance::CreateTower()
 {
 	GetWorld()->SpawnActor<AHSActorBase>();
@@ -52,7 +78,15 @@ void UHSGameInstance::CreateLeftMonster()
 	UClass* generatedBP = Cast<UClass>(StaticLoadObject(UClass::StaticClass(), NULL, *path.ToString()));
 
 	if (generatedBP)
-		auto monster = GetWorld()->SpawnActor<AHSEnemy>(generatedBP, spawnLocation, spawnRotator);
+	{
+		auto enemy = GetWorld()->SpawnActor<AHSEnemy>(generatedBP, spawnLocation, spawnRotator);
+
+		if (enemy)
+		{
+			int32 index = Cast<AHSCharacterBase>(enemy)->GetStatComponent()->GetIndex();
+			_enemyMap.Add(index, enemy);
+		}
+	}
 }
 
 void UHSGameInstance::CreateRightMonster()
@@ -66,5 +100,13 @@ void UHSGameInstance::CreateRightMonster()
 	UClass* generatedBP = Cast<UClass>(StaticLoadObject(UClass::StaticClass(), NULL, *path.ToString()));
 	
 	if (generatedBP)
-		auto monster = GetWorld()->SpawnActor<AHSEnemy>(generatedBP, spawnLocation, spawnRotator);
+	{
+		auto enemy = GetWorld()->SpawnActor<AHSEnemy>(generatedBP, spawnLocation, spawnRotator);
+
+		if (enemy)
+		{
+			int32 index = Cast<AHSCharacterBase>(enemy)->GetStatComponent()->GetIndex();
+			_enemyMap.Add(index, enemy);
+		}
+	}
 }

@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "Engine/DataTable.h"
-#include "HSCharacterBase.h"
+#include "HSEnemy.h"
 #include "HSGameInstance.generated.h"
 
 /**
@@ -76,6 +76,9 @@ public:
 	FMonsterStatData* GetMonsterStatData(int32 Index);
 	FTowerStatData* GetTowerStatData(int32 Level);
 
+	FVector GetCloserEnemyDirectionByTower();
+
+
 	void CreateTower();
 	void CreateLeftMonster();
 	void CreateRightMonster();
@@ -91,5 +94,5 @@ private:
 	class UDataTable* _towerStats;
 
 	UPROPERTY()
-	TMap<int32, AHSCharacterBase*> _objectMap;
+	TMap<int32, AHSEnemy*> _enemyMap;
 };

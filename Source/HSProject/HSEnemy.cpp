@@ -4,6 +4,7 @@
 #include "HSEnemy.h"
 #include <Components/CapsuleComponent.h>
 #include <Components/WidgetComponent.h>
+#include <GameFramework/CharacterMovementComponent.h>
 #include "HSCharacterAnimInstance.h"
 #include "HSAIController.h"
 #include "HSStatComponent.h"
@@ -14,8 +15,15 @@ AHSEnemy::AHSEnemy()
 {
 	Tags.Add("Enemy");
 
+	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -96.f), FRotator(0.f, 0.f, 180.f));
+
+	_statComponent = CreateDefaultSubobject<UHSStatComponent>(TEXT("STAT"));
+
 	GetCapsuleComponent()->InitCapsuleSize(45.f, 96.0f);
-	
+
+	AIControllerClass = AHSAIController::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
 	_worldHpWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBAR"));
 	_worldHpWidgetComponent->SetupAttachment(GetMesh());
 	_worldHpWidgetComponent->SetRelativeLocation(FVector(0.f, 0.f, 200.f));
@@ -29,13 +37,12 @@ AHSEnemy::AHSEnemy()
 		_worldHpWidgetComponent->SetDrawSize(FVector2D(300.f, 50.f));
 	}
 
-	AIControllerClass = AHSAIController::StaticClass();
-	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+	PrimaryActorTick.bCanEverTick = false;
 }
 
-void AHSEnemy::BeginPlay()
+void AHSEnemy::PreInitializeComponents()
 {
-	Super::BeginPlay();
+	Super::PreInitializeComponents();
 }
 
 void AHSEnemy::PostInitializeComponents()
@@ -50,13 +57,23 @@ void AHSEnemy::PostInitializeComponents()
 		HpWidget->BindHp(_statComponent);
 }
 
+void AHSEnemy::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
 float AHSEnemy::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float damage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 	
 	if (_statComponent->GetHp() <= 0)
+	{
 		Cast<AHSPlayer>(DamageCauser)->GetStatComponent()->OnGetExp(_statComponent->GetExpPoint());
-
+		GetCharacterMovement()->SetMovementMode(MOVE_None);
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+		
 	return damage;
 }
 
